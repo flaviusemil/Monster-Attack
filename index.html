@@ -9,39 +9,41 @@
 
 <body>
 <div id="app" class="container">
-    <div class="row">
+    <div class="row" v-if="isGameRunning">
         <div class="col-md-6">
             <h1 class="text-center">YOU</h1>
             <div class="healthbar">
-                <div class="healthbar-green text-center">
+                <div class="healthbar-green text-center" :style="{width: yourHealth + '%'}">
+                    {{yourHealth}}
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <h1 class="text-center">MONSTER</h1>
             <div class="healthbar">
-                <div class="healthbar-green text-center">
+                <div class="healthbar-green text-center" :style="{width: monsterHealth + '%'}">
+                    {{monsterHealth}}
                 </div>
             </div>
         </div>
     </div>
     <div class="row controls">
-        <div class="col-md-12">
-            <button id="start-game">START NEW GAME</button>
+        <div class="col-md-12" v-if="!isGameRunning">
+            <button id="start-game" @click="startNewGame()">START NEW GAME</button>
         </div>
-    </div>
-    <div class="row controls">
-        <div class="col-md-12">
-            <button id="attack">ATTACK</button>
-            <button id="special-attack">SPECIAL ATTACK</button>
-            <button id="heal">HEAL</button>
-            <button id="give-up">GIVE UP</button>
+
+        <div class="col-md-12" v-else>
+            <button id="attack" @click="attack(PlayerType.YOU)">ATTACK</button>
+            <button id="special-attack" @click="castSpecialAttack(PlayerType.YOU)">SPECIAL ATTACK</button>
+            <button id="heal" @click="castHeal(PlayerType.YOU)">HEAL</button>
+            <button id="give-up" @click="giveUp()">GIVE UP</button>
         </div>
     </div>
     <div class="row log">
         <div class="col-md-12">
             <ul>
-                <li>
+                <li v-for="action in actions" :class="{'system-log': action.sender === PlayerType.SYSTEM, 'player-turn': action.sender === PlayerType.YOU, 'monster-turn': action.sender === PlayerType.MONSTER}">
+                    {{action.message}}
                 </li>
             </ul>
         </div>
